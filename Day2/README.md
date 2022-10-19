@@ -259,5 +259,5 @@ terraform output --raw ssh_key > key.pem
 chmod 400 ./key.pem
 ssh -i ./key.pem azureuser@<substitute-your-vm-public_ip>
 exit
-terraform destroy a--auto-approve
+terraform destroy --auto-approve
 ```
