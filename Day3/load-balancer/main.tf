@@ -25,17 +25,7 @@ resource "azurerm_subnet" "my_subnet" {
   resource_group_name = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.my_virtual_network.name
   address_prefixes = ["10.0.1.0/24"]
-  depends_on = [
-    azurerm_resource_group.rg
-  ]
-}
 
-resource "azurerm_public_ip" "my_public_ip" {
-  count = 3
-  name = "myPublicIP${count.index}"
-  location = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  allocation_method = "Dynamic"    
   depends_on = [
     azurerm_resource_group.rg
   ]
@@ -49,7 +39,7 @@ resource "azurerm_network_security_group" "my-nsg" {
 
   security_rule {
     name = "SSH"    
-    priority = "1001"
+    priority = "100"
     direction = "Inbound"
     access = "Allow"
     protocol = "Tcp"
@@ -58,6 +48,42 @@ resource "azurerm_network_security_group" "my-nsg" {
     source_address_prefix = "*"
     destination_address_prefix = "*"
   }
+  security_rule {
+    name = "OpenHttpPortOnVM"    
+    priority = "200"
+    direction = "Inbound"
+    access = "Allow"
+    protocol = "Tcp"
+    source_port_range = "*"
+    destination_port_range = "80"
+    source_address_prefix = "*"
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name = "OpenICMPPortOnVM"    
+    priority = "300"
+    direction = "Inbound"
+    access = "Allow"
+    protocol = "ICMP"
+    source_port_range = "*"
+    destination_port_range = "*"
+    source_address_prefix = "*"
+    destination_address_prefix = "*"
+  }
+
+  depends_on = [
+    azurerm_resource_group.rg
+  ]
+}
+
+resource "azurerm_public_ip" "my_public_ip" {
+  count = 3
+  name = "myPublicIP${count.index}"
+  location = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method = "Dynamic"    
+//  sku             = "Standard"
+
   depends_on = [
     azurerm_resource_group.rg
   ]
@@ -76,8 +102,7 @@ resource "azurerm_network_interface" "my_nic" {
     public_ip_address_id = azurerm_public_ip.my_public_ip[count.index].id
   }  
   depends_on = [
-    azurerm_resource_group.rg,
-    azurerm_public_ip.my_public_ip
+    azurerm_resource_group.rg
   ]
 }
 
@@ -106,9 +131,6 @@ resource "azurerm_availability_set" "my-avs" {
   platform_fault_domain_count  = 3 // 3 Different Racks
   platform_update_domain_count = 3 // software updates will happen at different times
   managed                      = true
-  tags = {
-    environment = "Production"
-  }
 }
 
 resource "azurerm_linux_virtual_machine" "my_ubuntu_vm" {
@@ -119,8 +141,7 @@ resource "azurerm_linux_virtual_machine" "my_ubuntu_vm" {
   network_interface_ids = [azurerm_network_interface.my_nic[count.index].id]
   size = "Standard_DS1_v2"
   availability_set_id   = azurerm_availability_set.my-avs.id
-
-
+  
   os_disk {
     name = "myHardDisk${count.index}"
     caching = "ReadWrite"
@@ -143,10 +164,22 @@ resource "azurerm_linux_virtual_machine" "my_ubuntu_vm" {
     public_key = tls_private_key.my_ssh_key.public_key_openssh
   }
 
-  provisioner "local-exec" {
-      command = "sudo apt update && sudo apt install -y nginx && sudo systemctl enable nginx && sudo systemctl start nginx"
-      on_failure = continue
+  provisioner "remote-exec" {
+      inline = [
+        "sudo apt update && sudo apt install -y nginx",
+        "sudo systemctl enable nginx", 
+        "sudo systemctl start nginx"
+      ]
+      on_failure = fail
   }
+
+  connection {
+    type = "ssh"
+    user = "azureuser"
+    private_key = tls_private_key.my_ssh_key.private_key_openssh
+    host = self.public_ip_address
+  }
+
   depends_on = [
     azurerm_resource_group.rg, 
     azurerm_network_interface.my_nic,

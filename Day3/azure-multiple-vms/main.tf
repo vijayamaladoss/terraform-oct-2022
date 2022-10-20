@@ -26,7 +26,8 @@ resource "azurerm_subnet" "my_subnet" {
   virtual_network_name = azurerm_virtual_network.my_virtual_network.name
   address_prefixes = ["10.0.1.0/24"]
   depends_on = [
-    azurerm_resource_group.rg
+    azurerm_resource_group.rg,
+    azurerm_virtual_network.my_virtual_network
   ]
 }
 
