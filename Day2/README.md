@@ -238,3 +238,26 @@ azurerm_resource_group.tektutor_rg: Destruction complete after 1m21s
 
 Destroy complete! Resources: 1 destroyed.
 </pre>
+
+
+## Cloing the repository
+```
+cd ~
+git clone https://github.com/tektutor/terraform-oct-2022.git
+```
+
+## Lab - Creating a Virtual Machine in Azure using Terraform
+```
+cd ~/terraform-oct-2022
+git pull
+cd Day2/azure-vm/
+
+terraform init
+terraform apply --auto-approve
+
+terraform output --raw ssh_key > key.pem
+chmod 400 ./key.pem
+ssh -i ./key.pem azureuser@<substitute-your-vm-public_ip>
+exit
+terraform destroy --auto-approve
+```
