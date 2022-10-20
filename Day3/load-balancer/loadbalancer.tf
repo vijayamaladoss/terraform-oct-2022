@@ -11,7 +11,7 @@ resource "azurerm_lb" "my_lb" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku                 = "Standard"
-  sku_tier            = "Regional" //Other option is Global, Regional is default value
+  sku_tier            = "Global" //Other option is Global, Regional is default value
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
     public_ip_address_id = azurerm_public_ip.lb_public_ip.id
