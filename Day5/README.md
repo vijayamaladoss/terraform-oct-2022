@@ -43,3 +43,26 @@ https://github.com/tektutor/hello-spring-boot.git
 </pre>
 
 ## What is an Azure Pipeline?
+<pre>
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: mvn clean compile
+  displayName: 'Build the Spring Boot Microservice application code'
+
+- script: mvn test
+  displayName: 'Unit Test application binaries'
+
+- script: mvn package
+  displayName: 'Unit Test application binaries'
+
+</pre>
