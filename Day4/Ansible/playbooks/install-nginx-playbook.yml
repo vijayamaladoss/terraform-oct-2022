@@ -1,0 +1,8 @@
+- name: This playbook will demonstrate install nginx web server into the ansible nodes
+  hosts: all
+  tasks:
+  - name: Install nginx web sever into Ubuntu Ansible Node
+    apt: name=nginx state=latest update_cache=yes
+
+  - name: Start nginx web server on the Ubuntu Ansible Node
+    shell: service nginx start

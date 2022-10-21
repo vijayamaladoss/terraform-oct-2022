@@ -1,0 +1,5 @@
+- name: This is a first play in the playbook
+  hosts: all
+  tasks:
+  - name: Ping task
+    ping:
