@@ -1,0 +1,24 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: az login
+
+- script: |
+    cd Day5/TerraformWithAnsible
+    terraform init
+  displayName: 'Initialize Terrform Project'
+
+- script: |
+    cd Day5/TerraformWithAnsible
+    terraform plan -out ./vms.tfplan
+  displayName: 'Initialize Terrform Project'
+
+
+- script: |
+    cd Day5/TerraformWithAnsible
+    terraform apply ./vms.tfplan
+  displayName: 'Provision 3 VMs and Install Nginx Web Server'
