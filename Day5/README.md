@@ -176,4 +176,21 @@ az acr show --name alberto --query loginServer
 az acr credential show --name alberto
 ```
 
+Create a container
+```
+az container create
+  --resource-group buildagent
+  --name alberto
+  --image alberto.azurecr.io/buildagent:v1
+  --restart-policy OnFailure
+  --registry-login-server yourregistrylogin
+  --registry-username yourusername
+  --registry-password yourpassword
+  --environment-variables
+    'AZP_URL'='https://dev.azure.com/albertodenatale0870'
+    'AZP_TOKEN'='yourtoken'
+    'AZP_POOL'='DockerAgent'
+    'AZP_AGENT_NAME'='DockerAgent1'
+```
+
 
