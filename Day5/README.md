@@ -167,5 +167,13 @@ Create a Personal Access Token in Azure DevOps
 
 Enable the Admin User in Azure Container Registry
 ```
-
+az acr update -n alberto --admin-enabled true
 ```
+
+Look for server credentials
+```
+az acr show --name alberto --query loginServer
+az acr credential show --name alberto
+```
+
+
