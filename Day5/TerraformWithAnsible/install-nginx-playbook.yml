@@ -1,0 +1,8 @@
+- name: This playbook will install nginx web server
+  hosts: all
+  tasks:
+  - name: Install nginx web server on azure ubuntu virtual machine
+    apt: name=nginx state=latest update_cache=yes
+
+  - name: Start the nginx web server service
+    service: name=service state=started enable=true
