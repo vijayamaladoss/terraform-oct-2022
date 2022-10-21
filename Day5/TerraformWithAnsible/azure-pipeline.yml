@@ -1,3 +1,5 @@
+# Starter pipeline
+
 trigger:
 - main
 
@@ -5,7 +7,16 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: az login
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Azure Pass - Sponsorship(1)(c0a81cd4-e4ff-4f6a-a613-0d70aced5676)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'echo "Authorizing Azure Login ..."'
+    
+- script: |
+     sudo apt update
+     sudo apt install -y ansible
 
 - script: |
     cd Day5/TerraformWithAnsible
@@ -14,11 +25,5 @@ steps:
 
 - script: |
     cd Day5/TerraformWithAnsible
-    terraform plan -out ./vms.tfplan
-  displayName: 'Initialize Terrform Project'
-
-
-- script: |
-    cd Day5/TerraformWithAnsible
-    terraform apply ./vms.tfplan
+    terraform apply --auto-approve
   displayName: 'Provision 3 VMs and Install Nginx Web Server'
