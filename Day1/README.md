@@ -1,4 +1,4 @@
-# Day1
+# Day1 - Notes customization
 
 ## What is Cloud Computing?
 - Pay as you to Go pricing
